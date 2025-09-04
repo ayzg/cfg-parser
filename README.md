@@ -92,4 +92,163 @@ For each alternative rule of [non-term] add a new rule inlining the
 alternative definition:
   [[R]_[non-term]_[i]] -> [[op-set][i]] for [i + N] in [R...]
 ```
+**Example Output for `basic_expr`**
+```
+# parse
+[kiSyntax]
+[kiRuleDecl]
+    [ktIdentifier, S]
+    [kiAlternative]
+        [kiOpSet]
+            [ktIdentifier, term]
+        [kiOpSet]
+            [ktIdentifier, S]
+            [ktIdentifier, op_add]
+            [ktIdentifier, term]
+        [kiOpSet]
+            [ktIdentifier, op_add]
+            [ktIdentifier, term]
+[kiRuleDecl]
+    [ktIdentifier, term]
+    [kiAlternative]
+        [kiOpSet]
+            [ktIdentifier, factor]
+        [kiOpSet]
+            [ktIdentifier, term]
+            [ktIdentifier, op_mul]
+            [ktIdentifier, factor]
+[kiRuleDecl]
+    [ktIdentifier, factor]
+    [kiAlternative]
+        [kiOpSet]
+            [ktIdentifier, operand]
+        [kiOpSet]
+            [ktIdentifier, factor]
+            [ktStringLiteral, "^"]
+            [ktIdentifier, operand]
+[kiRuleDecl]
+    [ktIdentifier, operand]
+    [kiAlternative]
+        [kiOpSet]
+            [ktIdentifier, number]
+        [kiOpSet]
+            [ktIdentifier, variable]
+        [kiOpSet]
+            [ktStringLiteral, "("]
+            [ktIdentifier, S]
+            [ktStringLiteral, ")"]
+[kiRuleDecl]
+    [ktIdentifier, op_add]
+    [kiAlternative]
+        [kiOpSet]
+            [ktStringLiteral, "+"]
+        [kiOpSet]
+            [ktStringLiteral, "-"]
+[kiRuleDecl]
+    [ktIdentifier, op_mul]
+    [kiAlternative]
+        [kiOpSet]
+            [ktStringLiteral, "*"]
+        [kiOpSet]
+            [ktStringLiteral, "/"]
+S ->  term
+S ->  S op_add term
+S ->  op_add term
+factor ->  operand
+factor ->  factor "^" operand
+op_add ->  "+"
+op_add ->  "-"
+op_mul ->  "*"
+op_mul ->  "/"
+operand ->  number
+operand ->  variable
+operand ->  "(" S ")"
+term ->  factor
+term ->  term op_mul factor
 
+
+# start
+R ->  S
+S ->  term
+S ->  S op_add term
+S ->  op_add term
+factor ->  operand
+factor ->  factor "^" operand
+op_add ->  "+"
+op_add ->  "-"
+op_mul ->  "*"
+op_mul ->  "/"
+operand ->  number
+operand ->  variable
+operand ->  "(" S ")"
+term ->  factor
+term ->  term op_mul factor
+
+# term
+NS0 ->  "^"
+NS1 ->  "("
+NS2 ->  ")"
+R ->  S
+S ->  term
+S ->  S op_add term
+S ->  op_add term
+factor ->  operand
+factor ->  factor NS0 operand
+op_add ->  "+"
+op_add ->  "-"
+op_mul ->  "*"
+op_mul ->  "/"
+operand ->  number
+operand ->  variable
+operand ->  NS1 S NS2
+term ->  factor
+term ->  term op_mul factor
+
+# bin
+@S ->  S op_add
+@S_1_0 ->  op_add term
+@factor ->  factor NS0
+@factor_1_0 ->  NS0 operand
+@operand ->  NS1 S
+@operand_1_0 ->  S NS2
+@term ->  term op_mul
+@term_1_0 ->  op_mul factor
+NS0 ->  "^"
+NS1 ->  "("
+NS2 ->  ")"
+R ->  S
+S ->  term
+S ->  op_add term
+factor ->  operand
+op_add ->  "+"
+op_add ->  "-"
+op_mul ->  "*"
+op_mul ->  "/"
+operand ->  number
+operand ->  variable
+term ->  factor
+
+# unit
+@R ->  term
+@R1 ->  op_add term
+@S ->  S op_add
+@S ->  factor
+@S_1_0 ->  op_add term
+@factor ->  factor NS0
+@factor ->  number
+@factor1 ->  variable
+@factor_1_0 ->  NS0 operand
+@operand ->  NS1 S
+@operand_1_0 ->  S NS2
+@term ->  term op_mul
+@term_1_0 ->  op_mul factor
+NS0 ->  "^"
+NS1 ->  "("
+NS2 ->  ")"
+R ->  S
+S ->  op_add term
+op_add ->  "+"
+op_add ->  "-"
+op_mul ->  "*"
+op_mul ->  "/"
+```
