@@ -1,8 +1,9 @@
 ﻿# Context Free Grammar Parser
 ## Brief
 Usage:
+``` bash
     cfg-parser <path_to_cfg_file>
-
+```
 CFG(Context Free Grammar) parser cli app. Parses a CFG into an IR. From the IR you can:
 - Add Production 
 - Transform to Chomsky Normal Form Start.
